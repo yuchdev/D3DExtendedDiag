@@ -1,10 +1,3 @@
-//----------------------------------------------------------------------------
-// File: dxdiaginfo.cpp
-//
-// Desc: Sample app to read info from dxdiagn.dll
-//
-// Copyright (c) Microsoft Corp. All rights reserved.
-//-----------------------------------------------------------------------------
 #define STRICT
 #define INITGUID
 
@@ -2656,5 +2649,3 @@ VOID CDxDiagInfo::DestroyShowInfo( ShowInfo* pShowInfo )
 
     SAFE_DELETE( pShowInfo );
 }
-
-

@@ -1,10 +1,3 @@
-//----------------------------------------------------------------------------
-// File: showinfo.h
-//
-// Desc: 
-//
-// Copyright (c) Microsoft Corp. All rights reserved.
-//-----------------------------------------------------------------------------
 #ifndef SHOWINFO_H
 #define SHOWINFO_H
 

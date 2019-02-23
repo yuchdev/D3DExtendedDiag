@@ -1,10 +1,3 @@
-//----------------------------------------------------------------------------
-// File: inptinfo.h
-//
-// Desc: 
-//
-// Copyright (c) Microsoft Corp. All rights reserved.
-//-----------------------------------------------------------------------------
 #ifndef INPUTINFO_H
 #define INPUTINFO_H
 

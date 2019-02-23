@@ -1,10 +1,3 @@
-//----------------------------------------------------------------------------
-// File: main.cpp
-//
-// Desc: Sample app to read info from dxdiagn.dll
-//
-// Copyright (c) Microsoft Corp. All rights reserved.
-//-----------------------------------------------------------------------------
 #define STRICT
 
 #include <windows.h>

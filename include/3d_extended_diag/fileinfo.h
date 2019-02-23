@@ -1,10 +1,3 @@
-//----------------------------------------------------------------------------
-// File: fileinfo.h
-//
-// Desc: 
-//
-// Copyright (c) Microsoft Corp. All rights reserved.
-//-----------------------------------------------------------------------------
 #ifndef FILEINFO_H
 #define FILEINFO_H
 

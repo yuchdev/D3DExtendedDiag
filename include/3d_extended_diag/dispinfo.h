@@ -1,8 +1,3 @@
-//----------------------------------------------------------------------------
-// File: dispinfo.h
-//
-// Copyright (c) Microsoft Corp. All rights reserved.
-//-----------------------------------------------------------------------------
 #ifndef DISPINFO_H
 #define DISPINFO_H
 
