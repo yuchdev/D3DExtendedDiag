@@ -1,1 +1,3 @@
-# 3d_extended_diag
+# 3D Graphics Extended Diagnostic Tool
+
+Current work in progress
