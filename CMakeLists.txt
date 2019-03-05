@@ -25,6 +25,7 @@ elseif(${WIN32})
 endif()
 
 add_subdirectory(d3dcore)
+add_subdirectory(system3d_info)
 add_subdirectory(frontends/d3ddiagex)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)

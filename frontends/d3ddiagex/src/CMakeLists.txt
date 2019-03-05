@@ -6,6 +6,7 @@ file(GLOB SOURCES *.cpp ../include/${TARGET}/*.h)
 include_directories(${Boost_INCLUDE_DIRS} 
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${CMAKE_SOURCE_DIR}/d3dcore/include 
+	${CMAKE_SOURCE_DIR}/system3d_info/include
 )
 
 add_executable(${TARGET} ${SOURCES})
@@ -17,8 +18,8 @@ target_link_libraries(${TARGET}
 else()
 target_link_libraries(${TARGET} 
     ${Boost_LIBRARIES} 
-    d3dcore)
+    d3dcore system3d_info)
 
 endif()
 
-add_dependencies(${TARGET} d3dcore)
+add_dependencies(${TARGET} d3dcore system3d_info)

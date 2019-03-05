@@ -2,8 +2,17 @@
 #include <string>
 #include <d3ddiagex/command_line_parser.h>
 
+#include "d3dcore/d3d_Info.h"
+#include "system3d_info/console_visitor.h"
+#include "system3d_info/graphic_container.h"
+
+
+#include <boost/program_options.hpp>
+
 using namespace std;
 using namespace d3ddiagex;
+using namespace system3d_info;
+using namespace d3dcore;
 
 static CommandLineParams& get_params()
 {
@@ -28,6 +37,7 @@ void print_version()
 int main(int argc, char* argv[]){
 
     setlocale(0, "");
+	
 
     try {
         get_params().read_params(argc, argv);
@@ -41,6 +51,16 @@ int main(int argc, char* argv[]){
             print_version();
         }
         // TODO: Add application code here
+		std::cout << "Hello World!\n";
+
+		d3dcore::D3DInfo<system3d_info::GraphicContainer> d3dInfo;
+		ConsoleVisitor console_visitor;
+		d3dInfo.init();
+		d3dInfo.get_info();
+
+		auto rootContainer = d3dInfo.get_root_container();
+		rootContainer->accept(console_visitor);
+
     }
     // boost::program_options exception reports
     // about wrong command line parameters usage
