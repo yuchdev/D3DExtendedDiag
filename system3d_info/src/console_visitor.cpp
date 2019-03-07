@@ -19,7 +19,7 @@ ConsoleVisitor::~ConsoleVisitor()
 
 void ConsoleVisitor::visit(GraphicContainer & parent_container)
 {
-	auto children_containers = parent_container.GetChildrenContainers();
+	auto children_containers = parent_container.get_children_containers();
 	auto properties = parent_container.getProperties();
 	std::cout << parent_container.get_name() << std::endl;
 	std::cout << "--Properties:" << std::endl;

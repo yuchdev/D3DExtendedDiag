@@ -4,6 +4,9 @@ namespace system3d_info {
 
 	class GraphicContainer;
 
+///
+/// GraphicVisitor: Visitor Design pattern for GraphicContainer
+///
 	class GraphicVisitor
 	{
 	public:

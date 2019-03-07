@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
+#include <exception>
 #include <d3ddiagex/command_line_parser.h>
 
-#include "d3dcore/d3d_Info.h"
+#include "d3dcore/d3d_info.h"
 #include "system3d_info/console_visitor.h"
 #include "system3d_info/graphic_container.h"
 
@@ -51,15 +52,18 @@ int main(int argc, char* argv[]){
             print_version();
         }
         // TODO: Add application code here
-		std::cout << "Hello World!\n";
+		std::cout << "Display Information of DirectX!\n";
+		std::cout << "Waiting........" << std::endl;
 
 		d3dcore::D3DInfo<system3d_info::GraphicContainer> d3dInfo;
 		ConsoleVisitor console_visitor;
 		d3dInfo.init();
-		d3dInfo.get_info();
+		d3dInfo.query_info();
 
 		auto rootContainer = d3dInfo.get_root_container();
 		rootContainer->accept(console_visitor);
+
+		std::cout << "DONE!!!!!!!!!!!!!!!!" << std::endl;
 
     }
     // boost::program_options exception reports
@@ -69,6 +73,11 @@ int main(int argc, char* argv[]){
         cout << get_params().options_descript() << endl;
         usage();
     }
+	catch (std::system_error& e)
+	{
+		std::cout << "ERROR: " << e.what() << "\nError code: " << e.code() << "\n";
+	}
+
 
     return 0;
 }

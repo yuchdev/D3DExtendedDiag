@@ -17,7 +17,7 @@ using namespace system3d_info;
 	{
 	}
 
-	std::vector<std::shared_ptr<GraphicContainer>> GraphicContainer::GetChildrenContainers()
+	std::vector<std::shared_ptr<GraphicContainer>> GraphicContainer::get_children_containers()
 	{
 		return m_children_containers;
 	}
@@ -26,6 +26,10 @@ using namespace system3d_info;
 	{
 		m_children_containers.push_back(child);
 	}
+
+///
+/// accept: Accept a Visitor(Visitor Design Pattern) : GraphicContainer is a visitee
+///
 
 	void GraphicContainer::accept(GraphicVisitor & visitor)
 	{
@@ -39,6 +43,9 @@ using namespace system3d_info;
 
 		}
 	}
+
+	
+
 
 	void GraphicContainer::add_property(std::string key, std::string value)
 	{
