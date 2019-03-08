@@ -24,9 +24,9 @@ void ConsoleVisitor::visit(GraphicContainer & parent_container)
 	std::cout << parent_container.get_name() << std::endl;
 	std::cout << "--Properties:" << std::endl;
 	for (const auto& kv : properties) {
-		std::cout << "---"<<kv.first << ":" << kv.second << std::endl;
+		std::cout << "---" << kv.first << ":" << kv.second << std::endl;
 	}
-	
+
 }
 
 

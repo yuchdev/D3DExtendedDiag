@@ -4,16 +4,16 @@ namespace system3d_info {
 
 	class GraphicContainer;
 
-///
-/// GraphicVisitor: Visitor Design pattern for GraphicContainer
-///
+	///
+	/// GraphicVisitor: Visitor Design pattern for GraphicContainer
+	///
 	class GraphicVisitor
 	{
 	public:
 		GraphicVisitor();
-		~GraphicVisitor();
+		virtual ~GraphicVisitor();
 		virtual void visit(GraphicContainer &) = 0;
-		//virtual void Visit(LeafContainer &) = 0;
+
 	};
 }
 

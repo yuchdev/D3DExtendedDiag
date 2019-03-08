@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(case_number_container)
 	d3d_info.query_info();
 	auto root_container = d3d_info.get_root_container();
 	int nb_children = root_container->get_children_containers().size();
-	BOOST_CHECK( nb_children > 0 );
+	BOOST_CHECK(nb_children > 0);
 }
 
 
