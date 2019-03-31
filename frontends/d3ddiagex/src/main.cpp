@@ -1,6 +1,6 @@
+#include <d3ddiagex/command_line_parser.h>
 #include <iostream>
 #include <string>
-#include <d3ddiagex/command_line_parser.h>
 
 using namespace std;
 using namespace d3ddiagex;
@@ -17,7 +17,6 @@ void usage()
     exit(EXIT_SUCCESS);
 }
 
-
 void print_version()
 {
     // TODO: add version
@@ -25,8 +24,8 @@ void print_version()
     exit(EXIT_SUCCESS);
 }
 
-int main(int argc, char* argv[]){
-
+int main(int argc, char* argv[])
+{
     setlocale(0, "");
 
     try {

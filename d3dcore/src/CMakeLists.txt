@@ -18,4 +18,4 @@ else()
     add_library(${TARGET} ${SOURCES})
 endif()
 
-
+target_link_libraries(${TARGET} dxguid)
