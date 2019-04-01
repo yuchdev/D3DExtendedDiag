@@ -6,8 +6,6 @@
 #include <cassert>
 #include <sstream>
 
-#include <iostream>
-
 using namespace d3dcore;
 using std::wcout;
 using std::wcerr;
@@ -114,7 +112,9 @@ void D3DInfo::traverse_container(const wchar_t* parent_container_name, IDxDiagCo
 
                     // Add the parent name to the front if there's one, so that
                     // its easier to read on the screen
+                    std::wostringstream full_property_name;
                     if (parent_container_name) {
+                        
                         wcout << parent_container_name << '.' << property_name << " = " << result << '\n';
                     }
                     else {

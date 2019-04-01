@@ -18,9 +18,6 @@ BOOST_AUTO_TEST_SUITE(D3DCoreFunctionalTests);
 /// TODO: Create first unit test here
 BOOST_AUTO_TEST_CASE(FirstTestCase)
 {
-    D3DInfo d3d_info;
-    d3d_info.traverse();
-
     bool unit_test_created = false;
     BOOST_CHECK(unit_test_created);
 }
