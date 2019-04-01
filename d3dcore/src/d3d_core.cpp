@@ -1,12 +1,19 @@
+#include <d3dcore/d3d_core.h>
+
 #include <Windows.h>
 #include <dxdiag.h>
-
-#include <d3dcore/d3d_core.h>
-#include <d3dcore/resource.h>
-
 #include <stdexcept>
+#include <cassert>
+#include <sstream>
+
+#include <iostream>
 
 using namespace d3dcore;
+using std::wcout;
+using std::wcerr;
+
+
+namespace {
 
 void throw_if_failed(HRESULT hr, const char* msg)
 {
@@ -14,10 +21,36 @@ void throw_if_failed(HRESULT hr, const char* msg)
         throw std::runtime_error(msg);
 }
 
+std::wstring variant_to_string(const VARIANT& variant)
+{
+    std::wstring result;
+    switch (variant.vt)
+    {
+    case VT_UI4:
+        result = std::to_wstring(variant.intVal);
+        break;
+    case VT_I4:
+        result = std::to_wstring(variant.uintVal);
+        break;
+    case VT_BOOL:
+        result = variant.boolVal != 0 ? std::wstring(L"true") : std::wstring(L"false");
+        break;
+    case VT_BSTR:
+        assert(variant.bstrVal != nullptr);
+        result = std::wstring(variant.bstrVal, SysStringLen(variant.bstrVal));
+        break;
+    }
+    return result;
+}
+
+} // namespace
+
+
+
 
 D3DInfo::D3DInfo()
 {
-    HRESULT hr;
+    HRESULT hr{};
 
     hr = CoInitialize(NULL);
     throw_if_failed(hr, "Can not CoInitialize() COM");
@@ -30,100 +63,101 @@ D3DInfo::D3DInfo()
 
     throw_if_failed(hr, "Can not CoCreateInstance CLSID_DxDiagProvider");
 
-    DXDIAG_INIT_PARAMS dxDiagInitParam;
-    ZeroMemory(&dxDiagInitParam, sizeof(DXDIAG_INIT_PARAMS));
+    DXDIAG_INIT_PARAMS dxdiag_init_params;
+    ZeroMemory(&dxdiag_init_params, sizeof(DXDIAG_INIT_PARAMS));
 
-    dxDiagInitParam.dwSize = sizeof(DXDIAG_INIT_PARAMS);
-    dxDiagInitParam.dwDxDiagHeaderVersion = DXDIAG_DX9_SDK_VERSION;
-    dxDiagInitParam.bAllowWHQLChecks = true;
-    dxDiagInitParam.pReserved = NULL;
+    dxdiag_init_params.dwSize = sizeof(DXDIAG_INIT_PARAMS);
+    dxdiag_init_params.dwDxDiagHeaderVersion = DXDIAG_DX9_SDK_VERSION;
+    dxdiag_init_params.bAllowWHQLChecks = true;
+    dxdiag_init_params.pReserved = NULL;
 
-    hr = m_dxdiag_provider->Initialize(&dxDiagInitParam);
-    throw_if_failed(hr, "Can not Initialize DXDIAG_INIT_PARAMS ");
+    hr = m_dxdiag_provider->Initialize(&dxdiag_init_params);
+    throw_if_failed(hr, "Can not Initialize DXDIAG_INIT_PARAMS");
+
+    hr = m_dxdiag_provider->GetRootContainer(&m_dxdiag_root);
+    throw_if_failed(hr, "Can not Initialize DXDIAG_INIT_PARAMS");
 }
 
-
-#if 0
-std::string D3DInfo::get_property_value(IDxDiagContainer* dxContainer, WCHAR* propName)
+D3DInfo::~D3DInfo()
 {
-    HRESULT hr{};
-    VARIANT var{};
-    VariantInit(&var);
-    std::string result;
-
-    if (FAILED(hr = dxContainer->GetProp(propName, &var))) return std::string();
-
-
-    switch (var.vt) {
-
-    case VT_I4:
-        result = std::to_string(var.intVal);
-        break;
-
-    case VT_UI4:
-        result = std::to_string(var.uintVal);
-        break;
-
-    case VT_BOOL:
-        result = var.boolVal != 0 ? std::string("true") : std::string("false");
-        break;
-
-    default: result = std::string("Default Value");
-
-    }
-    VariantClear(&var);
-
-    return result;
+    m_dxdiag_root->Release();
+    m_dxdiag_provider->Release();
 }
 
-void D3DInfo::traverse(IDxDiagContainer* parent_container, std::shared_ptr<Container> parent)
+void D3DInfo::traverse()
 {
-    IDxDiagContainer*	pChildContainer;
-    DWORD 	dwChildCount;
-    DWORD 	dwPropCount;
-    DWORD	dwChildIndex;
-    WCHAR	wszChildName[256];
-    WCHAR	wszPropName[256];
+    traverse_container(nullptr, m_dxdiag_root);
+}
 
-    HRESULT hr = parent_container->GetNumberOfChildContainers(&dwChildCount);
-    throw_if_failed(hr, "Can not GetNumberOfChildContainers ");
+void D3DInfo::traverse_container(const wchar_t* parent_container_name, IDxDiagContainer* dxdiag_current_container)
+{
+    DWORD container_properties_count{};
+    WCHAR property_name[256] = {};
+    VARIANT property_value;
+    VariantInit(&property_value);
 
-
-    for (dwChildIndex = 0; dwChildIndex < dwChildCount; dwChildIndex++)
+    HRESULT hr = dxdiag_current_container->GetNumberOfProps(&container_properties_count);
+    
+    // 1.Read current container properties
+    if( SUCCEEDED(hr) )
     {
-        hr = parent_container->EnumChildContainerNames(dwChildIndex, wszChildName, 256); //get the IdxContainer Child's name		
-        std::string container_name = WChar_to_string(wszChildName);
+        // Print each property in this container
+        for (DWORD property_index = 0; property_index < container_properties_count; ++property_index)
+        {
+            hr = dxdiag_current_container->EnumPropNames(property_index, property_name, 256);
+            if( SUCCEEDED( hr ) )
+            {
+                hr = dxdiag_current_container->GetProp(property_name, &property_value);
+                if( SUCCEEDED( hr ) )
+                {
+                    std::wstring result = variant_to_string(property_value);
 
-        throw_if_failed(hr, "Can not GetNumberOfChildContainers ");
-        hr = parent_container->GetChildContainer(wszChildName, &pChildContainer);
-        throw_if_failed(hr, "Can not GetChildContainer ");
-
-        /*check if the child container has children*/
-        DWORD 	dwCount;
-        HRESULT hr = pChildContainer->GetNumberOfChildContainers(&dwCount);
-        throw_if_failed(hr, "Can not GetNumberOfChildContainers");
-        std::shared_ptr<Container> d3d_child;
-
-        d3d_child = std::make_shared<Container>(container_name);
-
-        //end of checking children container of pChildContainer		
-
-        // recursive traverse with pChildContainer and d3d_child.		
-        traverse(pChildContainer, d3d_child);
-        SAFE_RELEASE(pChildContainer);
-        parent->add_child_container(d3d_child);
+                    // Add the parent name to the front if there's one, so that
+                    // its easier to read on the screen
+                    if (parent_container_name) {
+                        wcout << parent_container_name << '.' << property_name << " = " << result << '\n';
+                    }
+                    else {
+                        wcout << property_name << " = " << result << '\n';
+                    }
+                        
+                    // Clear the variant (this is needed to free BSTR memory)
+                    VariantClear(&property_value);
+                }
+            }
+        }
     }
-    //adding list of property into Parent container
 
-    hr = parent_container->GetNumberOfProps(&dwPropCount);
-    throw_if_failed(hr, "Can not GetNumberOfProps ");
-    for (auto idx = 0; idx < dwPropCount; ++idx) {
-        hr = parent_container->EnumPropNames(idx, wszPropName, 256); //get the IdxContainer Child's name
-        throw_if_failed(hr, "Can not EnumPropNames ");
-        auto prop_value = get_property_value(parent_container, wszPropName);
-        auto prop_name = WChar_to_string(wszPropName);
-        parent->add_property(prop_name, prop_value);
+    // 2.Recursively call this function for each of its child containers
+    DWORD children_container_count{};
+    WCHAR child_container_name[256] = {};
+    IDxDiagContainer* child_container = nullptr;
+    hr = dxdiag_current_container->GetNumberOfChildContainers(&children_container_count);
+    if( SUCCEEDED(hr) )
+    {
+        for (DWORD child_index = 0; child_index < children_container_count; child_index++)
+        {
+            hr = dxdiag_current_container->EnumChildContainerNames(child_index, child_container_name, 256);
+            if( SUCCEEDED( hr ) )
+            {
+                hr = dxdiag_current_container->GetChildContainer(child_container_name, &child_container);
+                if( SUCCEEDED( hr ) )
+                {
+                    // wszFullChildName isn't needed but is used for text output
+                    std::wostringstream child_name;
+                    if (parent_container_name) {
+                        child_name << parent_container_name << '.' << child_container_name;
+                    }
+                    else {
+                        child_name << child_container_name;
+                    }
+                    traverse_container(child_name.str().c_str(), child_container);
+
+                    child_container->Release();
+                }
+            }
+        }
     }
 
 }
-#endif
+

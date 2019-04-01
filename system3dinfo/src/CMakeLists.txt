@@ -12,4 +12,5 @@ else()
     add_library(${TARGET} ${SOURCES})
 endif()
 
+add_dependencies(${TARGET} d3dcore)  
 target_link_libraries(${TARGET} ${Boost_LIBRARIES} d3dcore)

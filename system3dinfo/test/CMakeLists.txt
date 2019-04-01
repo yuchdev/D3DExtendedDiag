@@ -13,7 +13,9 @@ add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET}
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
     ${Boost_DATE_TIME_LIBRARY}
-    d3dcore)
- 
+    d3dcore
+    system3dinfo)
+
+add_dependencies(${TARGET} d3dcore system3dinfo)
 add_test(NAME system3dinfo_unit_test COMMAND ${TARGET})
 SET_PROPERTY(TARGET system3dinfo_unit_test PROPERTY FOLDER "Tests")
