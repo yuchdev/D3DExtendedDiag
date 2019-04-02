@@ -7,8 +7,6 @@
 #include <sstream>
 
 using namespace d3dcore;
-using std::wcout;
-using std::wcerr;
 
 
 namespace {
@@ -48,9 +46,7 @@ std::wstring variant_to_string(const VARIANT& variant)
 
 D3DInfo::D3DInfo()
 {
-    HRESULT hr{};
-
-    hr = CoInitialize(NULL);
+    HRESULT hr = CoInitialize(NULL);
     throw_if_failed(hr, "Can not CoInitialize() COM");
 
     hr = CoCreateInstance(CLSID_DxDiagProvider,
@@ -82,12 +78,12 @@ D3DInfo::~D3DInfo()
     m_dxdiag_provider->Release();
 }
 
-void D3DInfo::traverse()
+void D3DInfo::traverse(traverse_callback_t callback)
 {
-    traverse_container(nullptr, m_dxdiag_root);
+    traverse_container(callback, nullptr, m_dxdiag_root);
 }
 
-void D3DInfo::traverse_container(const wchar_t* parent_container_name, IDxDiagContainer* dxdiag_current_container)
+void D3DInfo::traverse_container(traverse_callback_t callback, const wchar_t* parent_container_name, IDxDiagContainer* dxdiag_current_container)
 {
     DWORD container_properties_count{};
     WCHAR property_name[256] = {};
@@ -113,6 +109,8 @@ void D3DInfo::traverse_container(const wchar_t* parent_container_name, IDxDiagCo
                     // Add the parent name to the front if there's one, so that
                     // its easier to read on the screen
                     std::wostringstream full_property_name;
+                    callback(parent_container_name, property_name, result);
+#if 0
                     if (parent_container_name) {
                         
                         wcout << parent_container_name << '.' << property_name << " = " << result << '\n';
@@ -120,7 +118,7 @@ void D3DInfo::traverse_container(const wchar_t* parent_container_name, IDxDiagCo
                     else {
                         wcout << property_name << " = " << result << '\n';
                     }
-                        
+#endif                        
                     // Clear the variant (this is needed to free BSTR memory)
                     VariantClear(&property_value);
                 }
@@ -135,7 +133,7 @@ void D3DInfo::traverse_container(const wchar_t* parent_container_name, IDxDiagCo
     hr = dxdiag_current_container->GetNumberOfChildContainers(&children_container_count);
     if( SUCCEEDED(hr) )
     {
-        for (DWORD child_index = 0; child_index < children_container_count; child_index++)
+        for (DWORD child_index = 0; child_index < children_container_count; ++child_index)
         {
             hr = dxdiag_current_container->EnumChildContainerNames(child_index, child_container_name, 256);
             if( SUCCEEDED( hr ) )
@@ -151,7 +149,7 @@ void D3DInfo::traverse_container(const wchar_t* parent_container_name, IDxDiagCo
                     else {
                         child_name << child_container_name;
                     }
-                    traverse_container(child_name.str().c_str(), child_container);
+                    traverse_container(callback, child_name.str().c_str(), child_container);
 
                     child_container->Release();
                 }
