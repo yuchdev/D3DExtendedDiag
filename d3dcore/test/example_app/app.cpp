@@ -7,6 +7,8 @@ using std::wcout;
 using std::wcerr;
 
 
+/// The application just shows simplest usage of Direct3D traverse callback,
+/// printing all properties and values
 void print_direct3d_param(const wchar_t* container_name, const wchar_t* property_name, const std::wstring& property_value)
 {
     if (container_name) {

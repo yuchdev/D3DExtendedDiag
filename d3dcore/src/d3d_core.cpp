@@ -108,17 +108,8 @@ void D3DInfo::traverse_container(traverse_callback_t callback, const wchar_t* pa
 
                     // Add the parent name to the front if there's one, so that
                     // its easier to read on the screen
-                    std::wostringstream full_property_name;
                     callback(parent_container_name, property_name, result);
-#if 0
-                    if (parent_container_name) {
-                        
-                        wcout << parent_container_name << '.' << property_name << " = " << result << '\n';
-                    }
-                    else {
-                        wcout << property_name << " = " << result << '\n';
-                    }
-#endif                        
+                    
                     // Clear the variant (this is needed to free BSTR memory)
                     VariantClear(&property_value);
                 }
