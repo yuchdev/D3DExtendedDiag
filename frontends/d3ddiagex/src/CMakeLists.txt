@@ -10,6 +10,8 @@ include_directories(${Boost_INCLUDE_DIRS}
 
 add_executable(${TARGET} ${SOURCES})
 
-target_link_libraries(${TARGET} ${Boost_LIBRARIES} system3dinfo)
+target_link_libraries(${TARGET} 
+    ${Boost_LIBRARIES} 
+    system3dinfo)
 
 add_dependencies(${TARGET} d3dcore)

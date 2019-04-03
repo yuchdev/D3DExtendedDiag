@@ -35,6 +35,8 @@ std::wstring variant_to_string(const VARIANT& variant)
         assert(variant.bstrVal != nullptr);
         result = std::wstring(variant.bstrVal, SysStringLen(variant.bstrVal));
         break;
+    default:
+        result = L"undefined type";
     }
     return result;
 }

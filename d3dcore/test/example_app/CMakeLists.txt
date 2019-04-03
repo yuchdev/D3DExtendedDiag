@@ -9,8 +9,7 @@ include_directories(${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../../incl
 
 add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET}
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-    ${Boost_DATE_TIME_LIBRARY}
+    ${Boost_LIBRARIES}
     d3dcore)
 
 add_dependencies(${TARGET} d3dcore) 
